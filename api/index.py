@@ -8,10 +8,18 @@ import sys
 # Add the root directory to sys.path so the 'src' module can be imported
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from src.video_info import GetVideo
-from src.model import Model
-from src.prompt import Prompt
-from src.timestamp_formatter import TimestampFormatter
+try:
+    from src.video_info import GetVideo
+    from src.model import Model
+    from src.prompt import Prompt
+    from src.timestamp_formatter import TimestampFormatter
+except ImportError:
+    # Fallback for different Vercel structure
+    from video_info import GetVideo
+    from model import Model
+    from prompt import Prompt
+    from timestamp_formatter import TimestampFormatter
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,18 +34,22 @@ app.add_middleware(
 )
 
 @app.get("/api/transcript")
+@app.get("/transcript") # Catch-all for routing
 async def get_transcript(url: str):
-    video_id = GetVideo.extract_video_id(url)
-    if not video_id:
-        raise HTTPException(status_code=400, detail="Invalid YouTube URL")
-    
-    title, _ = GetVideo.get_metadata(url)
-    transcript, raw_list = GetVideo.get_transcript(video_id)
-    
-    if not transcript:
-        raise HTTPException(status_code=404, detail="Transcript not found")
-    
-    return {"title": title, "transcript": transcript, "raw": raw_list}
+    try:
+        video_id = GetVideo.extract_video_id(url)
+        if not video_id:
+            raise HTTPException(status_code=400, detail="Invalid YouTube URL")
+        
+        title, _ = GetVideo.get_metadata(url)
+        transcript, raw_list = GetVideo.get_transcript(video_id)
+        
+        if not transcript:
+            raise HTTPException(status_code=404, detail="Transcript not available or blocked by YouTube")
+        
+        return {"title": title, "transcript": transcript, "raw": raw_list}
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.post("/api/ai_process")
 async def ai_process(data: dict = Body(...)):
