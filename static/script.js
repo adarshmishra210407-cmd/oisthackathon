@@ -15,11 +15,13 @@ const panelTitle = document.getElementById('panelTitle');
 async function fetchTranscription(url) {
     try {
         const response = await fetch(`/api/transcript?url=${encodeURIComponent(url)}`);
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
         if (!response.ok) throw new Error('Failed to fetch transcript');
-        return await response.json();
+        return data;
     } catch (err) {
         console.error(err);
-        alert('Error: Could not extract transcript. Is the local server running?');
+        alert(`Transcription Error: ${err.message}\nTip: Vercel IPs are sometimes blocked by YouTube. Try running locally or use a proxy.`);
         return null;
     }
 }
