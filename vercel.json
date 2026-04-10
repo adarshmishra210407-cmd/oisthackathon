@@ -1,20 +1,7 @@
 {
-  "rewrite": [
+  "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index.py" },
-    { "source": "/(.*)", "destination": "/static/$1" }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "api/index.py"
-    },
-    {
-      "src": "/assets/(.*)",
-      "dest": "static/$1"
-    },
-    {
-      "src": "/",
-      "dest": "static/index.html"
-    }
+    { "source": "/assets/(.*)", "destination": "/static/$1" },
+    { "source": "/(.*)", "destination": "/static/index.html" }
   ]
 }
