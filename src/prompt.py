@@ -38,3 +38,19 @@ class Prompt:
         
         Transcript:
         """
+
+    @staticmethod
+    def get_full_notes_prompt():
+        return """
+        You are an expert educational assistant. Analyze the video transcript provided and generate a comprehensive study guide.
+        
+        The guide must include exactly these three sections:
+        
+        1. **Summary**: A concise 2-3 paragraph overview of the main topic.
+        2. **Detailed Notes**: Deep-dive bullet points covering every major concept mentioned in the transcript. Group them logically.
+        3. **Quiz**: Generate 3-5 Multiple Choice Questions based on the content. Include options and provide the correct answers at the end of the quiz section.
+        
+        Format the entire response in clean Markdown. Use bold headings for each section.
+        
+        Transcript:
+        """
