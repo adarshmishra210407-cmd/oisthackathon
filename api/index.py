@@ -70,6 +70,9 @@ async def ai_process(data: dict = Body(...)):
         elif action == "quiz":
             prompt = Prompt.get_quiz_prompt()
             result = engine.generate(prompt, transcript)
+        elif action == "full":
+            prompt = Prompt.get_full_notes_prompt()
+            result = engine.generate(prompt, transcript)
         else:
             raise HTTPException(status_code=400, detail="Invalid action")
         return {"result": result}
